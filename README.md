@@ -1,5 +1,7 @@
 # Excluir_Email
 
+Este codigo é uma automação para excluir emails obsoletos com base em uma data, ou seja, daquela data para traz ele exclui todos os emails.
+
 - 1 - Abrir o https://console.cloud.google.com/
 - 2 - Crie um novo projeto ou selecione um existente.
 - 3 - Em "acesso rápido" abra o APIs e serviços
