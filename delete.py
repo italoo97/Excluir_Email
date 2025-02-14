@@ -50,29 +50,31 @@ def list_all_emails(service, query='', max_results=1000):
 
     return messages[:max_results]  # Retorna apenas o número máximo de e-mails
 
-def delete_emails_by_date(service, date):
-    """Exclui e-mails recebidos em uma data específica."""
-    # Converter a data para o formato esperado pela API
-    date_query = f'before:{date}'
-    print(f'Buscando e-mails anteriores a {date}...')
-
-    # Listar todos os e-mails que correspondem à consulta
-    messages = list_all_emails(service, date_query)
-
-    if not messages:
-        print('Nenhum e-mail encontrado para a data especificada.')
-    else:
+def delete_all_emails(service, query):
+    """Exclui todos os e-mails encontrados com base na consulta e verifica se foram removidos."""
+    while True:
+        messages = list_all_emails(service, query)
+        if not messages:
+            print("Todos os e-mails foram excluídos.")
+            break
+        
         print(f'{len(messages)} e-mails encontrados. Excluindo...')
         for message in messages:
-            service.users().messages().delete(userId='me', id=message['id']).execute()
-            print(f'E-mail ID {message["id"]} excluído.')
+            try:
+                service.users().messages().delete(userId='me', id=message['id']).execute()
+                print(f'E-mail ID {message["id"]} excluído.')
+            except Exception as e:
+                print(f"Erro ao excluir e-mail {message['id']}: {e}")
+
+        # Pequena pausa para evitar bloqueio da API do Google
+        time.sleep(2)
 
 if __name__ == '__main__':
     # Autenticar e criar o serviço
     service = authenticate_gmail()
 
     # Definir a data no formato AAAA/MM/DD
-    date = '2020/12/31'  # Altere para a data desejada
+    date_query = 'before:2020/12/31'  # Altere para a data desejada
 
     # Excluir e-mails
-    delete_emails_by_date(service, date)
+    delete_all_emails(service, date_query)
